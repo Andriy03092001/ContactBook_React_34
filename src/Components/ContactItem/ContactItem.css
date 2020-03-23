@@ -1,0 +1,33 @@
+.contact-item{
+    width: 250px;
+    padding: 15px;
+    float:left;
+    list-style-type: none;
+}
+
+.contact-item img{
+    width: 100%;
+}
+
+span .fa{
+    cursor: pointer;
+    margin-left:10px;
+}
+
+.star{
+    color: darkorange;
+    margin-left:10px;
+    cursor: pointer;
+}
+
+.trash{
+    color: darkred;
+    margin-left:10px;
+    cursor: pointer;
+}
+
+.edit{
+    color: green;
+    margin-left:10px;
+    cursor: pointer;
+}
