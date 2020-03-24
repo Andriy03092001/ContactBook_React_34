@@ -21,6 +21,12 @@ class ContactItem extends Component {
         });
     }
 
+    //Буде видалення
+    componentWillUnmount() {
+        console.log("componentWillUnmount");
+    }
+
+
     // setStar() {
     //     this.setState({
     //         isFavorite: !this.state.isFavorite

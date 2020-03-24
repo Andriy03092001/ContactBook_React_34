@@ -1,14 +1,17 @@
 import React, { Fragment, Component } from "react";
 import "./EditContact.css";
+import { Redirect } from 'react-router-dom';
 
 class EditContact extends Component {
 
     state = {
+        id: this.props.currentContact.id,
         name: this.props.currentContact.name,
         phone: this.props.currentContact.phone,
         address: this.props.currentContact.address,
         avatar: this.props.currentContact.avatar,
-        email: this.props.currentContact.email
+        email: this.props.currentContact.email,
+        isSended: false
     };
     getName(event) {
         this.setState({
@@ -38,14 +41,24 @@ class EditContact extends Component {
 
     sendData(event) {
         event.preventDefault();
-        const { name, address, phone, email, avatar } = this.state;
-        this.props.addContact(name, address, phone, email, avatar)
+        const { name, address, phone, email, avatar, id } = this.state;
+        this.props.saveEditedContact(name, address, phone, email, avatar, id);
+
+        this.setState({
+            isSended: true
+        })
+
     }
 
     render() {
-        const { name, phone, email, address, avatar } = this.state;
+        const { name, phone, email, address, avatar, isSended } = this.state;
 
         console.log(this.props.currentContact);
+
+        if (isSended === true) {
+            return (<Redirect to="/"></Redirect>)
+        }
+
         return (
             <Fragment>
                 <form onSubmit={this.sendData.bind(this)}>
@@ -77,7 +90,7 @@ class EditContact extends Component {
                         />
                     </div>
                     <button type="submit" className="btn btn-primary">
-                        Submit
+                        Save
                      </button>
                 </form>
             </Fragment>

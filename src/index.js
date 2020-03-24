@@ -10,8 +10,26 @@ import EditContact from "./Components/EditContact/EditContact";
 
 class App extends Component {
 
-    state = {
-        List: [
+    constructor() {
+        super();
+        console.log("here ctor");
+    }
+
+    //Коли по факту вже відмалювався
+    componentDidMount() {
+        console.log("componentDidMount");
+
+        const URL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5";
+
+        fetch(URL, { method: "GET" }).then(data => {
+            this.setState({
+                currency: data
+            })
+        }).catch(error => {
+            console.log("Error: ", error);
+        })
+
+        const data = [
             {
                 id: uuid(),
                 name: "Andrii Riabiiiiiii",
@@ -52,9 +70,41 @@ class App extends Component {
                 avatar: 17,
                 isFavorite: true
             }
+        ];
+        this.setState({
+            List: data
+        });
+    }
 
-        ],
-        currentContact: null
+    //Коли треба щоб не робився перерендер чи ні (Приклад з зіркою)
+    shouldComponentUpdate(prevProps, nextState) {
+        console.log("prevProps ->", prevProps);
+        console.log("nextState ->", nextState);
+        // if (nextState.List[0] === true) {
+        //     return false;
+        // }
+        // else {
+        //     return true;
+        // }
+        return true;
+    }
+
+    //Коли відбулися зміни 
+    componentDidUpdate() {
+        console.log("componentDidUpdate");
+    }
+
+    //Буде видалення
+    componentWillUnmount() {
+        console.log("componentWillUnmount");
+    }
+
+
+
+    state = {
+        List: [],
+        currentContact: null,
+        currency: null
     };
 
     changeFavorite = id => {
@@ -121,7 +171,39 @@ class App extends Component {
     }
 
 
+    saveEditedContact = (name, address, phone, email, avatar, id) => {
+        const editedContact = {
+            id: id,
+            name: name,
+            phone: phone,
+            email: email,
+            address: address,
+            gender: "men",
+            avatar: avatar,
+            isFavorite: false
+        };
+
+        console.log(`Name: ${editedContact.name}\n
+        Address: ${editedContact.address}\n
+        Email: ${editedContact.email}\n
+        Avatar: ${editedContact.avatar}\n
+        Phone: ${editedContact.phone}`);
+
+        const tempList = this.state.List;
+        for (var i = 0; i < tempList.length; i++) {
+            if (tempList[i].id === id) {
+                tempList[i] = editedContact;
+            }
+        }
+        this.setState({
+            List: tempList
+        });
+
+
+    }
+
     render() {
+
         return (
             <Fragment>
                 <Router>
@@ -167,6 +249,7 @@ class App extends Component {
                                     exact
                                     render={() => <EditContact
                                         currentContact={this.state.currentContact}
+                                        saveEditedContact={this.saveEditedContact}
                                     ></EditContact>}
                                 ></Route>
 
