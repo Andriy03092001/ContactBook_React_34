@@ -15,89 +15,118 @@ class App extends Component {
         console.log("here ctor");
     }
 
+    // URL = "https://event-7c503.firebaseio.com/list.json";
+    URL = "https://contactbook-9f583.firebaseio.com/list.json";
+
+    updateContactList = () => {
+        fetch(this.URL, { method: "GET" })
+            .then(data => {
+                return data.json();
+            })
+            .then(data => {
+                console.log("My array from firebase ->", data);
+                this.setState({
+                    List: data
+                })
+            }).catch(error => {
+                console.log("Error: ", error);
+            });
+    }
+
+    async saveChanges(myList) {
+        await fetch(this.URL, {
+            method: "PUT",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(myList)
+        })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        this.updateContactList();
+    }
+
+
     //Коли по факту вже відмалювався
     componentDidMount() {
         console.log("componentDidMount");
 
-        const URL = "https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5";
+        this.updateContactList();
 
-        fetch(URL, { method: "GET" }).then(data => {
-            this.setState({
-                currency: data
-            })
-        }).catch(error => {
-            console.log("Error: ", error);
-        })
-
-        const data = [
-            {
-                id: uuid(),
-                name: "Andrii Riabiiiiiii",
-                phone: "+38 (095) 41 66 765",
-                email: "cuanid236316@gmail.com",
-                address: "Rivne Soborna 16",
-                gender: "men",
-                avatar: 3,
-                isFavorite: false
-            },
-            {
-                id: uuid(),
-                name: "Oksana Vilkova",
-                phone: "+38 (777) 41 11 765",
-                email: "oksonoooochka@gmail.com",
-                address: "Kiev",
-                gender: "women",
-                avatar: 3,
-                isFavorite: true
-            },
-            {
-                id: uuid(),
-                name: "Kate Yaroshik",
-                phone: "+38 (777) 11 22 725",
-                email: "kateyaroshik@gmail.com",
-                address: "Rivne Kornin 16",
-                gender: "women",
-                avatar: 17,
-                isFavorite: true
-            },
-            {
-                id: uuid(),
-                name: "Bogdan Lohovsiy",
-                phone: "+38 (666) 33 11 725",
-                email: "loh111@gmail.com",
-                address: "Selo SRAKA",
-                gender: "men",
-                avatar: 17,
-                isFavorite: true
-            }
-        ];
-        this.setState({
-            List: data
-        });
+        // const data = [
+        //     {
+        //         id: uuid(),
+        //         name: "Andrii Riabiiiiiii",
+        //         phone: "+38 (095) 41 66 765",
+        //         email: "cuanid236316@gmail.com",
+        //         address: "Rivne Soborna 16",
+        //         gender: "men",
+        //         avatar: 3,
+        //         isFavorite: false
+        //     },
+        //     {
+        //         id: uuid(),
+        //         name: "Oksana Vilkova",
+        //         phone: "+38 (777) 41 11 765",
+        //         email: "oksonoooochka@gmail.com",
+        //         address: "Kiev",
+        //         gender: "women",
+        //         avatar: 3,
+        //         isFavorite: true
+        //     },
+        //     {
+        //         id: uuid(),
+        //         name: "Kate Yaroshik",
+        //         phone: "+38 (777) 11 22 725",
+        //         email: "kateyaroshik@gmail.com",
+        //         address: "Rivne Kornin 16",
+        //         gender: "women",
+        //         avatar: 17,
+        //         isFavorite: true
+        //     },
+        //     {
+        //         id: uuid(),
+        //         name: "Bogdan Lohovsiy",
+        //         phone: "+38 (666) 33 11 725",
+        //         email: "loh111@gmail.com",
+        //         address: "Selo SRAKA",
+        //         gender: "men",
+        //         avatar: 17,
+        //         isFavorite: true
+        //     }
+        // ];
+        // this.setState({
+        //     List: data
+        // });
     }
 
-    //Коли треба щоб не робився перерендер чи ні (Приклад з зіркою)
-    shouldComponentUpdate(prevProps, nextState) {
-        console.log("prevProps ->", prevProps);
-        console.log("nextState ->", nextState);
-        // if (nextState.List[0] === true) {
-        //     return false;
-        // }
-        // else {
-        //     return true;
-        // }
-        return true;
-    }
+    // //Коли треба щоб не робився перерендер чи ні (Приклад з зіркою)
+    // shouldComponentUpdate(prevProps, nextState) {
+    //     console.log("prevProps ->", prevProps);
+    //     console.log("nextState ->", nextState);
+    //     // if (nextState.List[0] === true) {
+    //     //     return false;
+    //     // }
+    //     // else {
+    //     //     return true;
+    //     // }
+    //     return true;
+    // }
 
-    //Коли відбулися зміни 
-    componentDidUpdate() {
-        console.log("componentDidUpdate");
-    }
+    // //Коли відбулися зміни 
+    // componentDidUpdate() {
+    //     console.log("componentDidUpdate");
+    // }
 
-    //Буде видалення
-    componentWillUnmount() {
-        console.log("componentWillUnmount");
-    }
+    // //Буде видалення
+    // componentWillUnmount() {
+    //     console.log("componentWillUnmount");
+    // }
 
 
 
@@ -137,15 +166,20 @@ class App extends Component {
             avatar: avatar,
             isFavorite: false
         };
+        let tempList = [];
+        if (this.state.List != null) {
+            tempList = this.state.List.slice();
+        }
+
+        tempList.push(newContact);
 
         this.setState(state => {
-            let tempList = this.state.List.slice();
-            tempList.push(newContact);
 
             return {
                 List: tempList
             };
         });
+        this.saveChanges(tempList)
 
     }
 
@@ -156,7 +190,8 @@ class App extends Component {
 
         this.setState({
             List: tempList
-        })
+        });
+        this.saveChanges(tempList);
     }
 
 

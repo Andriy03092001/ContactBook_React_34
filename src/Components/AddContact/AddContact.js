@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from "react";
 import "./AddContact.css";
+import { Redirect } from "react-router-dom";
 
 class AddContact extends Component {
 
@@ -8,7 +9,8 @@ class AddContact extends Component {
         phone: null,
         address: null,
         avatar: null,
-        email: null
+        email: null,
+        isSended: false
     };
     getName(event) {
         this.setState({
@@ -39,10 +41,18 @@ class AddContact extends Component {
     sendData(event) {
         event.preventDefault();
         const { name, address, phone, email, avatar } = this.state;
-        this.props.addContact(name, address, phone, email, avatar)
+        this.props.addContact(name, address, phone, email, avatar);
+        this.setState({
+            isSended: true
+        })
     }
 
     render() {
+
+        if (this.state.isSended === true) {
+            return (<Redirect to="/"></Redirect>)
+        }
+
         return (
             <Fragment>
                 <form onSubmit={this.sendData.bind(this)}>
